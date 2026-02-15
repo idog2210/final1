@@ -4,6 +4,7 @@ import { StatusCodes as HSC } from 'http-status-codes';
 
 type AuthPayload = {
   userId: string;
+  // MICHAL: יש לך כבר type systemRole בuserModel
   systemRole: 'user' | 'admin' | 'superadmin';
 };
 

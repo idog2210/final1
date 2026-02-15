@@ -51,6 +51,7 @@ router.post('/register', async (req, res) => {
       });
     }
 
+    // MICHAL: יצרת פונקציה בשביל זה. תשתמש בה כל פעם שהיא רלוונטית
     const token = jwt.sign({ userId: user._id.toString(), systemRole: user.systemRole }, secret, { expiresIn: '15m' });
 
     return res.status(HSC.CREATED).json({
@@ -142,6 +143,8 @@ router.post('/forgot-password', async (req, res) => {
     const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
 
     user.resetPasswordTokenHash = tokenHash;
+    // MICHAL: no magic numbers. אני רוצה קבועים של SECONDS_IN_MINUTES וMILLISECONDS_IN_SECOND
+    // אחרת לא באמת ברור מה המספרים האלה.
     user.resetPasswordExpiresAt = new Date(Date.now() + 15 * 60 * 1000);
     await user.save();
 
@@ -168,6 +171,8 @@ router.post('/reset-password', async (req, res) => {
       });
     }
 
+    // MICHAL: זה כבר string, אין צורך להמרה הזו
+    // MICHAL: שים את זה בקבוע כמו MIN_PASSWORD_LENGTH
     if (String(newPassword).length < 8) {
       return res.status(HSC.BAD_REQUEST).json({
         status: 'error',

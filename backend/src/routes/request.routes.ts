@@ -91,7 +91,9 @@ router.get('/:id', requireAuth, async (req, res) => {
       });
     }
 
+    // MICHAL: יכול גם לבדוק פשוט אם מכיל admin
     const isAdmin = role === 'admin' || role === 'superadmin';
+    // MICHAL: createdBy is required, מה הצורך לבדוק את זה?
     const createdById = request.createdBy ? String(request.createdBy) : '';
     const isOwner = createdById === userId;
 

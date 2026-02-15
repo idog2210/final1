@@ -9,6 +9,8 @@ const router = Router();
 
 router.get('/me', requireAuth, async (req, res) => {
   const userId = (req as any).user.userId as string;
+  // MICHAL: בדיקה שהמשתמש באמת קיים צריכה להיות חלק מהאותנטיקציה
+  // MICHAL: איפה הtry catch?
   const user = await UserModel.findById(userId);
   if (!user) {
     return res.status(HSC.NOT_FOUND).json({
@@ -29,7 +31,8 @@ router.patch('/me', requireAuth, async (req, res) => {
   const { name, bahadRole } = req.body as { name?: string; bahadRole?: string };
 
   const update: any = {};
-  if (name !== undefined) update.name = String(name).trim();
+  // MICHAL: name כבר string
+  if (name !== undefined) update.name = name.trim();
   if (bahadRole !== undefined) update.bahadRole = String(bahadRole).trim();
 
   if ('systemRole' in req.body || 'email' in req.body || 'password' in req.body || 'passwordHash' in req.body) {
@@ -56,6 +59,7 @@ router.patch('/me', requireAuth, async (req, res) => {
 
 router.patch('/me/password', requireAuth, async (req, res) => {
   const userId = (req as any).user.userId as string;
+  // MICHAL: למה כאן אתה לא ישירות עושה destructuring על הbody?
   const body = (req.body ?? {}) as { currentPassword?: string; newPassword?: string };
   const { currentPassword, newPassword } = body;
 
@@ -82,6 +86,7 @@ router.patch('/me/password', requireAuth, async (req, res) => {
     });
   }
 
+  // MICHAL: ביצירת המשתמש אתה לא בודק את אורך הסיסמא, השתדל להיות אחיד
   if (String(newPassword).length < 8) {
     return res.status(HSC.BAD_REQUEST).json({
       status: 'error',
@@ -98,12 +103,14 @@ router.patch('/me/password', requireAuth, async (req, res) => {
   });
 });
 
+// MICHAL: כל שאר הendpoints שדורשות הרשאות מנהל נמצאות בrouter מיועד, למה זה נפרד?
 router.get('/', requireAuth, requireAdmin, async (req, res) => {
   try {
     const role = req.query.role as string | undefined;
 
     const filter: any = {};
 
+    // MICHAL: הרגע בדקת שמדובר במנהל, אין טעם לבדוק את זה
     if (role !== undefined) {
       if (role !== 'user' && role !== 'admin' && role !== 'superadmin') {
         return res.status(HSC.BAD_REQUEST).json({
@@ -111,6 +118,7 @@ router.get('/', requireAuth, requireAdmin, async (req, res) => {
           message: 'Invalid role',
         });
       }
+      // MICHAL: כולם יכולים לראות רק ברמה שלהם ולא גם בכל הרמות מתחת?
       filter.systemRole = role;
     }
 
@@ -197,6 +205,7 @@ router.patch('/:id', requireAuth, async (req, res) => {
     const { name, bahadRole, systemRole } = req.body as {
       name?: string;
       bahadRole?: string;
+      // MICHAL: יצרת type בדיוק כזה
       systemRole?: 'user' | 'admin' | 'superadmin';
     };
 
@@ -218,6 +227,7 @@ router.patch('/:id', requireAuth, async (req, res) => {
           message: 'Only superadmin can change roles',
         });
       }
+      // MICHAL: יש לך מערך של הערכים המותרים, תבדוק מולו
       if (systemRole !== 'user' && systemRole !== 'admin' && systemRole !== 'superadmin') {
         return res.status(HSC.BAD_REQUEST).json({
           status: 'error',

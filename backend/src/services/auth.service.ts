@@ -1,3 +1,4 @@
+// MICHAL: מה המטרה של הקובץ הזה? אני לא מוצאת שימוש בו. ודא למחוק קבצים לא נחוצים
 import bcrypt from 'bcrypt';
 import { StatusCodes as HSC } from 'http-status-codes';
 import { UserModel } from '../models/User.model';
