@@ -1,3 +1,5 @@
+// MICHAL: אם אתה לא משתמש בקובץ הזה מחק אותו.
+
 import mongoose from 'mongoose';
 const mongoUrl = process.env.MONGO_URL;
 

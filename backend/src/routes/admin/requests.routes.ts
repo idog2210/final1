@@ -23,6 +23,8 @@ router.get('/', requireAuth, requireAdmin, async (req, res) => {
     const filter: any = {};
 
     if (status) {
+      // MICHAL: switch case
+      // MICHAL: אבל בכל מקרה עדיף פשוט לבדוק אם open approved or rejected בבת אחד ואם כן לשים את status, ולטפל פרטנית רק במקרים המיוחדים
       if (status === 'OPEN') filter.status = 'OPEN';
       else if (status === 'APPROVED') filter.status = 'APPROVED';
       else if (status === 'REJECTED') filter.status = 'REJECTED';
@@ -97,6 +99,7 @@ router.get('/', requireAuth, requireAdmin, async (req, res) => {
 router.patch('/:id/decide', requireAuth, requireAdmin, async (req, res) => {
   try {
     const { decision, rejectionReason } = req.body as {
+      // MICHAL: זה סתם מסבך ליצור את זה ככה. שישלחו isApproved: boolean. זה חוסך בדיקות וטעויות לא נחוצות
       decision: 'APPROVE' | 'REJECT';
       rejectionReason?: string;
     };

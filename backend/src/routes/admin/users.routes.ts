@@ -5,6 +5,7 @@ import { StatusCodes as HSC } from 'http-status-codes';
 
 const router = Router();
 
+// MICHAL: יש לך route כזה בדיוק כבר בuserRouter הרגיל
 router.patch('/:id', requireAuth, async (req, res) => {
   try {
     const editorRole = (req as any).user.systemRole as string;
@@ -27,6 +28,7 @@ router.patch('/:id', requireAuth, async (req, res) => {
     if (bahadRole !== undefined) update.bahadRole = String(bahadRole).trim();
 
     if (systemRole !== undefined) {
+      // MICHAL: תשווה מול המערך שלך
       if (systemRole !== 'user' && systemRole !== 'admin' && systemRole !== 'superadmin') {
         return res.status(HSC.BAD_REQUEST).json({
           status: 'error',
